@@ -1,180 +1,203 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useEffect, useState } from "react";
+import {
+    Alert,
+    FlatList,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
-import { ExternalLink } from '@/components/external-link';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function TabTwoScreen() {
-  const safeAreaInsets = useSafeAreaInsets();
-  const insets = {
-    ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
-  };
-  const theme = useTheme();
+const linhasExemplo = [
+  "875A-10 - Aeroporto / Perdizes",
+  "875P-10 - Metrô Barra Funda / Rio Pequeno",
+  "8000-10 - Terminal Lapa / Praça Ramos",
+  "702C-10 - Jardim Bonfiglioli / Metrô Belém",
+];
 
-  const contentPlatformStyle = Platform.select({
-    android: {
-      paddingTop: insets.top,
-      paddingLeft: insets.left,
-      paddingRight: insets.right,
-      paddingBottom: insets.bottom,
-    },
-    web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
-    },
-  });
+export default function Linhas() {
+  const [pesquisa, setPesquisa] = useState("");
+  const [resultados, setResultados] = useState<string[]>([]);
+  const [favoritos, setFavoritos] = useState<string[]>([]);
+  const [mostrarFavoritos, setMostrarFavoritos] = useState(false);
+
+  useEffect(() => {
+    carregarFavoritos();
+  }, []);
+
+  async function carregarFavoritos() {
+    try {
+      const dados = await AsyncStorage.getItem("favoritos");
+
+      if (dados !== null) {
+        setFavoritos(JSON.parse(dados));
+      }
+    } catch (erro) {
+      Alert.alert("Erro", "Não foi possível carregar os favoritos.");
+    }
+  }
+
+  async function alternarFavorito(linha: string) {
+    try {
+      let novosFavoritos;
+
+      if (favoritos.includes(linha)) {
+        novosFavoritos = favoritos.filter((item) => item !== linha);
+      } else {
+        novosFavoritos = [...favoritos, linha];
+      }
+
+      await AsyncStorage.setItem("favoritos", JSON.stringify(novosFavoritos));
+
+      setFavoritos(novosFavoritos);
+    } catch (erro) {
+      Alert.alert("Erro", "Não foi possível salvar o favorito.");
+    }
+  }
+
+  function buscarLinhas() {
+    setMostrarFavoritos(false);
+
+    const filtradas = linhasExemplo.filter((linha) =>
+      linha.toLowerCase().includes(pesquisa.trim().toLowerCase()),
+    );
+
+    setResultados(pesquisa.trim() ? filtradas : []);
+  }
+
+  const lista = mostrarFavoritos ? favoritos : resultados;
 
   return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: theme.background }]}
-      contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="subtitle">Explore</ThemedText>
-          <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
-          </ThemedText>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Linhas de ônibus</Text>
 
-          <ExternalLink href="https://docs.expo.dev" asChild>
-            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.linkButton}>
-                <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.text}
-                  name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
-                  size={12}
-                />
-              </ThemedView>
-            </Pressable>
-          </ExternalLink>
-        </ThemedView>
+      <Text style={styles.subtitulo}>
+        Pesquise uma linha ou consulte seus favoritos.
+      </Text>
 
-        <ThemedView style={styles.sectionsWrapper}>
-          <Collapsible title="File-based routing">
-            <ThemedText type="small">
-              This app has two screens: <ThemedText type="code">src/app/index.tsx</ThemedText> and{' '}
-              <ThemedText type="code">src/app/explore.tsx</ThemedText>
-            </ThemedText>
-            <ThemedText type="small">
-              The layout file in <ThemedText type="code">src/app/_layout.tsx</ThemedText> sets up
-              the tab navigator.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/router/introduction">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+      <TextInput
+        style={styles.input}
+        placeholder="Digite o número da linha"
+        value={pesquisa}
+        onChangeText={setPesquisa}
+      />
 
-          <Collapsible title="Android, iOS, and web support">
-            <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
-              <ThemedText type="small">
-                You can open this project on Android, iOS, and the web. To open the web version,
-                press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
-                project.
-              </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
-              />
-            </ThemedView>
-          </Collapsible>
+      <TouchableOpacity style={styles.botao} onPress={buscarLinhas}>
+        <Text style={styles.textoBotao}>Pesquisar</Text>
+      </TouchableOpacity>
 
-          <Collapsible title="Images">
-            <ThemedText type="small">
-              For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
-              <ThemedText type="code">@3x</ThemedText> suffixes to provide files for different
-              screen densities.
-            </ThemedText>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.imageReact} />
-            <ExternalLink href="https://reactnative.dev/docs/images">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+      <TouchableOpacity
+        style={styles.botaoFavoritos}
+        onPress={() => setMostrarFavoritos(true)}
+      >
+        <Text style={styles.textoBotao}>
+          Ver favoritos ({favoritos.length})
+        </Text>
+      </TouchableOpacity>
 
-          <Collapsible title="Light and dark mode components">
-            <ThemedText type="small">
-              This template has light and dark mode support. The{' '}
-              <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+      <Text style={styles.secao}>
+        {mostrarFavoritos ? "Meus favoritos" : "Resultados"}
+      </Text>
 
-          <Collapsible title="Animations">
-            <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
-              <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
-              the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
-              animate opening this hint.
-            </ThemedText>
-          </Collapsible>
-        </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
-      </ThemedView>
-    </ScrollView>
+      <FlatList
+        data={lista}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.textoLinha}>{item}</Text>
+
+            <TouchableOpacity onPress={() => alternarFavorito(item)}>
+              <Text style={styles.favorito}>
+                {favoritos.includes(item)
+                  ? "★ Remover favorito"
+                  : "☆ Adicionar favorito"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.mensagem}>
+            {mostrarFavoritos
+              ? "Você ainda não tem favoritos."
+              : "Nenhuma linha encontrada."}
+          </Text>
+        }
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
   container: {
-    maxWidth: MaxContentWidth,
-    flexGrow: 1,
+    flex: 1,
+    backgroundColor: "#F5F7FA",
+    padding: 20,
   },
-  titleContainer: {
-    gap: Spacing.three,
-    alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
+  titulo: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#1565C0",
+    marginBottom: 10,
   },
-  centerText: {
-    textAlign: 'center',
+  subtitulo: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 20,
   },
-  pressed: {
-    opacity: 0.7,
+  input: {
+    backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#CCC",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
   },
-  linkButton: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
-    justifyContent: 'center',
-    gap: Spacing.one,
-    alignItems: 'center',
+  botao: {
+    backgroundColor: "#1565C0",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 10,
   },
-  sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
+  botaoFavoritos: {
+    backgroundColor: "#455A64",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 20,
   },
-  collapsibleContent: {
-    alignItems: 'center',
+  textoBotao: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
-  imageTutorial: {
-    width: '100%',
-    aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
+  secao: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
   },
-  imageReact: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
+  card: {
+    backgroundColor: "#FFF",
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#DDD",
+  },
+  textoLinha: {
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  favorito: {
+    color: "#1565C0",
+    fontWeight: "bold",
+  },
+  mensagem: {
+    color: "#777",
+    textAlign: "center",
+    marginTop: 20,
   },
 });
