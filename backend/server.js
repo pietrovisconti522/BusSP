@@ -73,6 +73,35 @@ app.get("/linhas", async (req, res) => {
   }
 });
 
+app.get("/posicoes-demo", (req, res) => {
+  const linha = String(req.query.linha || "").trim();
+
+  if (!linha) {
+    return res.status(400).json({
+      erro: "Digite uma linha de ônibus.",
+    });
+  }
+
+  const onibus = [
+    {
+      id: 1,
+      prefixo: "12345",
+      linha: linha,
+      latitude: -23.5505,
+      longitude: -46.6333,
+    },
+    {
+      id: 2,
+      prefixo: "67890",
+      linha: linha,
+      latitude: -23.558,
+      longitude: -46.64,
+    },
+  ];
+
+  res.json(onibus);
+});
+
 app.listen(3000, "0.0.0.0", () => {
   console.log("Servidor BusSP iniciado na porta 3000");
 });

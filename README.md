@@ -1,56 +1,110 @@
-# Welcome to your Expo app 👋
+# BusSP — Aplicativo de Transporte Público
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Sobre o projeto
 
-## Get started
+O BusSP é um aplicativo desenvolvido em React Native com Expo e TypeScript para facilitar a consulta de linhas de ônibus da cidade de São Paulo.
 
-1. Install dependencies
+O projeto foi desenvolvido como atividade acadêmica da FIAP, na disciplina de Cross-Platform Application Development.
 
-   ```bash
-   npm install
-   ```
+## Funcionalidades
 
-2. Start the app
+- Tela inicial com apresentação do aplicativo.
+- Pesquisa de linhas de ônibus.
+- Modo de demonstração com linhas simuladas.
+- Integração com a API Olho Vivo da SPTrans, dependente de autenticação válida.
+- Adição e remoção de linhas favoritas.
+- Armazenamento local dos favoritos utilizando AsyncStorage.
+- Consulta de posições simuladas de ônibus.
+- Visualização dos veículos em um mapa.
 
-   ```bash
-   npx expo start
-   ```
+## Tecnologias utilizadas
 
-In the output, you'll find options to open the app in a
+- React Native
+- Expo
+- TypeScript
+- Node.js
+- Express
+- AsyncStorage
+- React Native Maps
+- API Olho Vivo — SPTrans
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Estrutura do projeto
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+BusSP/
+├── backend/
+│   ├── server.js
+│   └── .env.example
+├── src/
+│   ├── app/
+│   │   ├── index.tsx
+│   │   ├── explore.tsx
+│   │   └── posicoes.tsx
+│   └── components/
+│       └── app-tabs.tsx
+├── package.json
+└── README.md
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+## Como executar
 
-### Other setup steps
+### 1. Instalar as dependências do aplicativo
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Na pasta principal do projeto:
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 2. Instalar as dependências do backend
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+cd backend
+npm install
+```
 
-## Join the community
+### 3. Configurar o token
 
-Join our community of developers creating universal apps.
+Criar o arquivo `backend/.env` com:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```env
+SPTRANS_TOKEN=SEU_TOKEN_AQUI
+```
+
+### 4. Iniciar o backend
+
+Dentro da pasta `backend`:
+
+```bash
+node server.js
+```
+
+### 5. Iniciar o aplicativo
+
+Em outro terminal, na pasta principal do projeto:
+
+```bash
+npx expo start
+```
+
+Abrir o aplicativo utilizando o Expo Go.
+
+Para acessar o backend pelo celular, configurar o endereço IPv4 do computador nos arquivos do aplicativo que realizam requisições.
+
+O computador e o celular devem estar na mesma rede Wi-Fi.
+
+## Observações
+
+A API Olho Vivo da SPTrans exige autenticação. Como a autenticação não foi concluída com sucesso durante o desenvolvimento, o projeto oferece um modo de demonstração.
+
+As posições dos ônibus apresentadas no mapa são simuladas e não representam o rastreamento em tempo real.
+
+## Integrantes
+
+- Nome: [NOME COMPLETO] — RM: [RM]
+- Nome: [NOME COMPLETO] — RM: [RM]
+- Nome: [NOME COMPLETO] — RM: [RM]
+
+## Repositório
+
+https://github.com/pietrovisconti522/BusSP

@@ -28,6 +28,11 @@ export default function AppTabs() {
           renderingMode="template"
         />
       </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="posicoes">
+        <NativeTabs.Trigger.Label>Ônibus</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="bus.fill" md="directions_bus" />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }
