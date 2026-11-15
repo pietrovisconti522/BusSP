@@ -101,9 +101,9 @@ As posições dos ônibus apresentadas no mapa são simuladas e não representam
 
 ## Integrantes
 
-- Nome: [NOME COMPLETO] — RM: [RM]
-- Nome: [NOME COMPLETO] — RM: [RM]
-- Nome: [NOME COMPLETO] — RM: [RM]
+- Nome: Pietro Visconti Bueno de Mello — RM: 567673
+- Nome: Caio Moda Barbieri — RM: 566747
+- Nome: Victor Puglia Neves — RM: 567854
 
 ## Repositório
 

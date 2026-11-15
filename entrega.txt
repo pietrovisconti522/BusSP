@@ -1,0 +1,11 @@
+FIAP - Cross-Platform Application Development
+
+## Integrantes
+
+- Nome: Pietro Visconti Bueno de Mello — RM: 567673
+- Nome: Caio Moda Barbieri — RM: 566747
+- Nome: Victor Puglia Neves — RM: 567854
+
+## Repositório
+
+https://github.com/pietrovisconti522/BusSP
